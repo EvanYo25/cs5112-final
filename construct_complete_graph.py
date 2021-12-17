@@ -172,7 +172,7 @@ class Graph:
             return route
         ret = []
         retRoute = []
-        for i in range(1, len(dist)):
+        for i in range(0, len(dist)):
             if i == src:
                 ret.append(0)
                 retRoute.append(constructRoute(parent, i, []))

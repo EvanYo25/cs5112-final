@@ -30,7 +30,7 @@ MAXCOUNT = 100
 
 
 def calDist(city_a, city_b):
-    return complete_graph[city_a][city_b]
+    return complete_graph[city_b][city_a]
 
 def calPathDist(indexList):
     sum = 0.0
