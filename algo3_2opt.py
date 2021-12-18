@@ -1,13 +1,23 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from construct_complete_graph import *
 
 # print(subway_stops[0])
 # print(type(data[0][1]))
 
-chosen_station = [12, 57, 86, 88, 90]
-chosen_station.sort()
 
-start_station = 12
+# chosen_station = [12, 57, 86, 88, 90]
+
+np.random.seed(0)
+stops = list(range(107))
+chosen_station = np.random.choice(stops, 50, replace=False)
+print("The chosen stations are:")
+print(chosen_station)
+chosen_station = chosen_station.tolist()
+
+
+chosen_station.sort()
+start_station = chosen_station[0]
 start_index = chosen_station.index(start_station)
 
 print("chosen_station: ", chosen_station)
@@ -26,7 +36,7 @@ print("route between stations:")
 pprint.pprint(route)
 print("------")
 
-MAXCOUNT = 100
+
 
 
 def calDist(city_a, city_b):
@@ -59,7 +69,7 @@ def reversePath(path):
     rePath[1:-1] = rePath[-2:0:-1]
     return rePath
     
-def updateBestPath(bestPath):
+def updateBestPath(bestPath, MAXCOUNT):
     count = 0
     while count < MAXCOUNT:
         # print(calPathDist(bestPath))
@@ -80,14 +90,14 @@ def getExactPath(path):
     ret = []
     for i in path:
         ret.append(chosen_station[i])
-    print(ret)
+    # print(ret)
     return ret
 
 def getPathWithName(exactPath):
     ret = []
     for i in exactPath:
         ret.append(subway_stops[i])
-    print(ret)
+    # print(ret)
     return ret
 
 def printPathWithDetail(path):
@@ -98,9 +108,11 @@ def printPathWithDetail(path):
             ret.append(subway_stops[j])
         if i != len(path) - 2:
             ret.pop()
-    print(ret)
+    # print(ret)
 
-def opt2():
+def opt2(cnt):
+    MAXCOUNT = cnt
+
     # construct an array of 0~len(chosen_station)
     bestPath = np.arange(0, len(chosen_station))
     bestPath[0], bestPath[start_index] = bestPath[start_index], bestPath[0]
@@ -109,15 +121,38 @@ def opt2():
     bestPath = np.append(bestPath, start_index)
 
     # run algorithm
-    bestPath = updateBestPath(bestPath)
+    bestPath = updateBestPath(bestPath, MAXCOUNT)
 
 
-    print("result: ")
-    print("distance: ", calPathDist(bestPath))
-    print("best Path", bestPath)
+    # print("result: ")
+    ret = calPathDist(bestPath)
+    # print("distance: ", ret)
+    # print("best Path", bestPath)
   
     exactPath = getExactPath(bestPath)
     getPathWithName(exactPath)
     printPathWithDetail(bestPath)
 
-opt2()
+    return ret
+
+if __name__ == '__main__':
+    epoch = 2000
+    x = range(1, epoch+1)
+    result = []
+    
+    for i in x:
+        if i%100 == 0:
+            print(i)
+        result.append(opt2(i))
+
+    print(x)
+    print(chosen_station)
+    print(result)
+
+    plt.plot(x, result, 'r')   # red line without marker
+    plt.xlim([1, epoch+1])
+    plt.ylim([min(result)-5, max(result)+5])
+    plt.title('2opt - ' + str(len(chosen_station)) + 'stations, maxCount 1~' + str(epoch),fontsize=12)
+    plt.xlabel('maxCount',fontsize=10)
+    plt.ylabel('distance',fontsize=10)
+    plt.show()

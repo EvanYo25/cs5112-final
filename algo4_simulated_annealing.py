@@ -8,10 +8,20 @@ from construct_complete_graph import *
 # print(subway_stops[0])
 # print(type(data[0][1]))
 
-chosen_station = [12, 57, 86, 88, 90]
+# chosen_station = [12, 57, 86, 88, 90]
+# chosen_station = [2, 7, 10, 13, 16, 22, 24, 45, 52, 54, 60, 68, 73, 75, 76, 84, 85, 86, 99, 106]
+chosen_station = [1, 2, 3, 4, 6, 7, 8, 10, 13, 15, 16, 17, 18, 22, 24, 26, 27, 30, 33, 41, 42, 43, 45, 48, 51, 52, 54, 59, 60, 61, 63, 66, 68, 71, 73, 75, 76, 78, 79, 84, 85, 86, 89, 92, 93, 94, 99, 100, 102, 106]
+
+# np.random.seed(0)
+# stops = list(range(107))
+# chosen_station = np.random.choice(stops, 20, replace=False)
+# print("The chosen stations are:")
+# print(chosen_station)
+# chosen_station = chosen_station.tolist()
+
 chosen_station.sort()
 
-start_station = 12
+start_station = chosen_station[0]
 start_index = chosen_station.index(start_station)
 
 print("chosen_station: ", chosen_station)
@@ -30,16 +40,21 @@ print("route between stations:")
 pprint.pprint(route)
 print("------")
 
-
+initTemp = 0
+mark = 0
 
 def initParameter():
     # custom function initParameter():
     # Initial parameter for simulated annealing algorithm
-    tInitial = 100.0                # (initial temperature)
+    tInitial = 2500.0                # (initial temperature)
     tFinal  = 1                     # (stop temperature)
-    nMarkov = 1000                # Markov
+    nMarkov = 3000                # Markov
     alfa    = 0.98                 # T(k)=alfa*T(k-1)
 
+    global initTemp
+    global mark
+    initTemp = tInitial
+    mark = nMarkov
     return tInitial,tFinal,alfa,nMarkov
 
 # TSPLib
@@ -207,7 +222,18 @@ def main():
     getPathWithName(exactPath)
     printPathWithDetail(bestPath)
 
+    return recordBest
+
     exit()
 
 if __name__ == '__main__':
-    main()
+    result = main()
+    print(result)
+    
+    plt.plot(result, 'r')   # red line without marker
+    plt.xlim([0, len(result)])
+    plt.ylim([min(result)-5, max(result)+5])
+    plt.title('sa - ' + str(len(chosen_station)) + 'stations, initial temperature ' + str(initTemp) + ',nMarkov ' + str(mark),fontsize=12)
+    plt.xlabel('iteration',fontsize=10)
+    plt.ylabel('distance',fontsize=10)
+    plt.show()
